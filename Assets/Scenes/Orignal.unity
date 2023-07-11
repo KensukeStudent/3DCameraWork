@@ -1791,8 +1791,6 @@ MonoBehaviour:
     trackDistance: 0
     trackAngle: {x: 0, y: 0, z: 0}
     lockOnTarget: {fileID: 0}
-  isRot: 0
-  autoAnglePower: 3
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9610,7 +9608,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8500061879210670192}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 94c0f978b5c09e142b86f74991dbb043, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.2
