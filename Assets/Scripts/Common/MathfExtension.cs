@@ -40,4 +40,21 @@ public static class MathfExtension
         Vector2 vectorOB2 = new Vector2(vectorOB3.x, vectorOB3.z);
         return Vector2.SignedAngle(vectorOA2, vectorOB2);
     }
+
+    /// <summary>
+    /// 3点の座標から角度を取得
+    /// <para>角度計算はVector.Angleで計算(左右どちらの角度かを考慮しない)</para>
+    /// </summary>
+    /// <param name="origin">求められる角度</param>
+    /// <param name="pointA">originからpointAに直線を引くベクトル</param>
+    /// <param name="pointB">originからpointBに直線を引くベクトル</param>
+    public static float GetAngle(Vector3 origin, Vector3 pointA, Vector3 pointB)
+    {
+        Vector3 vectorOA3 = pointA - origin;
+        Vector3 vectorOB3 = pointB - origin;
+
+        Vector2 vectorOA2 = new Vector2(vectorOA3.x, vectorOA3.z);
+        Vector2 vectorOB2 = new Vector2(vectorOB3.x, vectorOB3.z);
+        return Vector2.Angle(vectorOA2, vectorOB2);
+    }
 }

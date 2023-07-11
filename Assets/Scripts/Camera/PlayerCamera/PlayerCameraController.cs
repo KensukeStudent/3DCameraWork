@@ -295,20 +295,30 @@ namespace VoxelBrave
             return angle;
         }
 
-        private Vector2 GetNormalAngle(Vector2 angle)
+        private Vector2 GetNormalAngle(Vector2 trackAngle)
         {
             Vector2 mouseAngle = GetMouseAngle();
-            angle.x -= mouseAngle.x;
-            angle.x = Mathf.Clamp(angle.x, -MAX_ANGLE, MAX_ANGLE);
-            angle.y += mouseAngle.y;
-            return angle;
+            trackAngle.x -= mouseAngle.x;
+            trackAngle.x = Mathf.Clamp(trackAngle.x, -MAX_ANGLE, MAX_ANGLE);
+            trackAngle.y += mouseAngle.y;
+            return trackAngle;
         }
 
         /// <summary>
         /// ロックオン時のオート角度設定
         /// </summary>
-        private Vector2 GetLockOnAutoAngle(Vector2 angle)
+        private Vector2 GetLockOnAutoAngle(Vector2 trackAngle)
         {
+            // プレイヤーをベースとしたカメラとロックオンターゲットとの角度
+            var playerPos = model.GetPlayer.GetBottomTransfrom();
+            var camPos = currentCamera.transform.position;
+            var lockOn = LockOnTarget.GetBottomTransfrom();
+
+            var angle = MathfExtension.GetAngle(playerPos, camPos, lockOn);
+            var signedAngle = MathfExtension.GetSignedAngle(playerPos, camPos, lockOn);
+            LogUtil.Log($"プレイヤーを原点としたカメラと敵の角度 : {signedAngle}", false);
+            Debug.Log($"GetAngle角度: {angle}");
+
             // 11未満でviewportの可動域を広げていく
             var diff_PL_distance = Vector3.Distance(model.GetPlayer.GetBottomTransfrom(), LockOnTarget.GetBottomTransfrom());
             LogUtil.Log($"プレイヤーと敵の差分 : {diff_PL_distance}", false);
@@ -316,29 +326,35 @@ namespace VoxelBrave
             float diff = 0;
             if (diff_PL_distance > EXPAND_LOCKON_DISTANCE)
             {
-                // 角度で中心を取ることが難しいのでviewport座標から中心計算
-                var viewportPoint = currentCamera.WorldToViewportPoint(v);
-                diff = VIEWPORT_CENTER - viewportPoint.x;
+                var sign = signedAngle > 0 ? 1 : -1;
+                diff = (LOCKON_ANGLE_CENTER * sign - signedAngle);
             }
             // プレイヤーと敵が近すぎると正面に来てしまい、見えずらくなるので角度を少し足した位置にカメラを配置する
             else
             {
-                // プレイヤーをベースとしたカメラとロックオンターゲットとの角度
-                var playerPos = model.GetPlayer.GetBottomTransfrom();
-                var camPos = currentCamera.transform.position;
-                var lockOn = LockOnTarget.GetBottomTransfrom();
-                var degree = MathfExtension.GetSignedAngle(playerPos, camPos, lockOn);
-                LogUtil.Log($"プレイヤーを原点としたカメラと敵の角度 : {degree}", false);
-
                 var perDistance = MathfExtension.ClampPercent(diff_PL_distance, LINIT_LOCKON_DISTANCE, EXPAND_LOCKON_DISTANCE);
                 var diffAngle = (LOCKON_ANGLE_CENTER - MAX_LOCKON_ANGLE.x) * perDistance;
                 var diffRangeAngle = MAX_LOCKON_ANGLE.x + diffAngle;
-                float viewport = degree > 0 ? diffRangeAngle : -diffRangeAngle;
-                diff = (viewport - degree) * Time.deltaTime;
+
+                // 自動オート角度範囲内で左右キーが入力されていれば、角度更新しない
+                // 条件を入れる↓
+
+                var sign = signedAngle > 0 ? 1 : -1;
+                diff = (diffRangeAngle * sign - signedAngle);
             }
 
-            angle.y += diff;
-            return angle;
+            trackAngle.y += diff * Time.deltaTime;
+            return trackAngle;
+        }
+
+        private void Test()
+        {
+            // プレイヤーをベースとしたカメラとロックオンターゲットとの角度
+            var playerPos = model.GetPlayer.GetBottomTransfrom();
+            var camPos = currentCamera.transform.position;
+            var lockOn = LockOnTarget.GetBottomTransfrom();
+            var a = MathfExtension.GetAngle(playerPos, camPos, lockOn);
+            Debug.Log($"GetAngle角度: {a}");
         }
 
         /// <summary>
