@@ -29,7 +29,7 @@ namespace VoxelBrave
         public Vector3 BodySize { private set; get; }
 
         [SerializeField]
-        protected Animator anim = null;
+        protected Animator animator = null;
 
         [SerializeField]
         protected Rigidbody rb = null;
@@ -40,6 +40,21 @@ namespace VoxelBrave
         /// 移動中
         /// </summary>
         public bool IsMoving => movingDirecion.magnitude > 0;
+
+        /// <summary>
+        /// 入力方向
+        /// </summary>
+        protected Vector2 inputDirection = Vector2.zero;
+
+        /// <summary>
+        /// 左右に入力中であるか
+        /// </summary>
+        public bool IsLeftRight => inputDirection.x != 0;
+
+        /// <summary>
+        /// 上下に入力中であるか
+        /// </summary>
+        public bool IsUpDown => inputDirection.y != 0;
 
         protected virtual void Start()
         {

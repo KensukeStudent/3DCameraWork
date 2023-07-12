@@ -76,8 +76,8 @@ namespace VoxelBrave
             {
                 m_jumpInput = true;
             }
-            anim.SetFloat("MoveSpeed", movingDirecion.magnitude);
-            anim.SetBool("Grounded", m_isGrounded);
+            animator.SetFloat("MoveSpeed", movingDirecion.magnitude);
+            animator.SetBool("Grounded", m_isGrounded);
         }
 
         private void FixedUpdate()
@@ -90,9 +90,9 @@ namespace VoxelBrave
         private void DirectUpdate()
         {
             Transform camera = Camera.main.transform;
-            var x = Input.GetAxisRaw("Horizontal");
-            var z = Input.GetAxisRaw("Vertical");
-            movingDirecion = x * camera.right + z * camera.forward;
+            inputDirection.x = Input.GetAxisRaw("Horizontal");
+            inputDirection.y = Input.GetAxisRaw("Vertical");
+            movingDirecion = inputDirection.x * camera.right + inputDirection.y * camera.forward;
             movingDirecion.y = 0;
             movingDirecion.Normalize();
             if (IsMoving)
@@ -124,12 +124,12 @@ namespace VoxelBrave
 
             if (!m_wasGrounded && m_isGrounded)
             {
-                anim.SetTrigger("Land");
+                animator.SetTrigger("Land");
             }
 
             if (!m_isGrounded && m_wasGrounded)
             {
-                anim.SetTrigger("Jump");
+                animator.SetTrigger("Jump");
             }
         }
 

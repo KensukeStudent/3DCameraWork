@@ -309,52 +309,41 @@ namespace VoxelBrave
         /// </summary>
         private Vector2 GetLockOnAutoAngle(Vector2 trackAngle)
         {
-            // プレイヤーをベースとしたカメラとロックオンターゲットとの角度
+            // プレイヤーを基点としたカメラ座標とロックオンターゲット座標からcosΘを計算
             var playerPos = model.GetPlayer.GetBottomTransfrom();
             var camPos = currentCamera.transform.position;
             var lockOn = LockOnTarget.GetBottomTransfrom();
+            var signedPlayerΘ = MathfExtension.GetSignedAngle(playerPos, camPos, lockOn);
 
-            var angle = MathfExtension.GetAngle(playerPos, camPos, lockOn);
-            var signedAngle = MathfExtension.GetSignedAngle(playerPos, camPos, lockOn);
-            LogUtil.Log($"プレイヤーを原点としたカメラと敵の角度 : {signedAngle}", false);
-            Debug.Log($"GetAngle角度: {angle}");
-
-            // 11未満でviewportの可動域を広げていく
+            // プレイヤーとロックオンターゲットとの距離
             var diff_PL_distance = Vector3.Distance(model.GetPlayer.GetBottomTransfrom(), LockOnTarget.GetBottomTransfrom());
-            LogUtil.Log($"プレイヤーと敵の差分 : {diff_PL_distance}", false);
 
             float diff = 0;
+            float autoLockAngle = 0;
+            // 指定座標までプレイヤーとターゲットが正面になるようなカメラアングル
             if (diff_PL_distance > EXPAND_LOCKON_DISTANCE)
             {
-                var sign = signedAngle > 0 ? 1 : -1;
-                diff = (LOCKON_ANGLE_CENTER * sign - signedAngle);
+                autoLockAngle = LOCKON_ANGLE_CENTER;
             }
-            // プレイヤーと敵が近すぎると正面に来てしまい、見えずらくなるので角度を少し足した位置にカメラを配置する
             else
             {
+                // プレイヤーと敵が近すぎると正面に来てしまい、見えずらくなるので角度を少し足した位置にカメラを配置する
                 var perDistance = MathfExtension.ClampPercent(diff_PL_distance, LINIT_LOCKON_DISTANCE, EXPAND_LOCKON_DISTANCE);
                 var diffAngle = (LOCKON_ANGLE_CENTER - MAX_LOCKON_ANGLE.x) * perDistance;
-                var diffRangeAngle = MAX_LOCKON_ANGLE.x + diffAngle;
+                autoLockAngle = MAX_LOCKON_ANGLE.x + diffAngle;
 
                 // 自動オート角度範囲内で左右キーが入力されていれば、角度更新しない
-                // 条件を入れる↓
-
-                var sign = signedAngle > 0 ? 1 : -1;
-                diff = (diffRangeAngle * sign - signedAngle);
+                if (MathfExtension.IsRange(Mathf.Abs(signedPlayerΘ), autoLockAngle, LOCKON_ANGLE_CENTER) && model.GetPlayer.IsLeftRight)
+                {
+                    return trackAngle;
+                }
             }
 
+            // 左右に角度を足していく
+            var sign = signedPlayerΘ > 0 ? 1 : -1;
+            diff = (autoLockAngle * sign - signedPlayerΘ);
             trackAngle.y += diff * Time.deltaTime;
             return trackAngle;
-        }
-
-        private void Test()
-        {
-            // プレイヤーをベースとしたカメラとロックオンターゲットとの角度
-            var playerPos = model.GetPlayer.GetBottomTransfrom();
-            var camPos = currentCamera.transform.position;
-            var lockOn = LockOnTarget.GetBottomTransfrom();
-            var a = MathfExtension.GetAngle(playerPos, camPos, lockOn);
-            Debug.Log($"GetAngle角度: {a}");
         }
 
         /// <summary>
