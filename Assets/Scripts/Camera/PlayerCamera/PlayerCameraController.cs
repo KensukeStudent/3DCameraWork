@@ -431,7 +431,8 @@ namespace VoxelBrave
             {
                 // ２点間の中点
                 var lookCenter = (LockOnTarget.GetCenterTransfrom() + VT) / 2;
-                lookCenter.y = Mathf.Max(LockOnTarget.GetCenterTransfrom().y, VT.y) / 3;
+                // 中心より少し上を中点
+                lookCenter.y = Mathf.Max(LockOnTarget.GetCenterTransfrom().y, VT.y) / 2.5f;
                 target = lookCenter;
             }
             l = Vector3.Lerp(l, target, Time.fixedDeltaTime * LookAtLerpPower);
