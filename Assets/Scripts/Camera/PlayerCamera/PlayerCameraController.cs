@@ -204,6 +204,10 @@ namespace VoxelBrave
             hitMask = LayerMask.GetMask("CameraHit");
         }
 
+        // -------------------------------------------------------------
+        // LateUpdateで処理
+        // -------------------------------------------------------------
+
         /// <summary>
         /// キャラクター座標以外の処理をLateUpdateで行う
         /// </summary>
@@ -214,22 +218,7 @@ namespace VoxelBrave
                 return;
 
             ClacCameraPosition();
-            SetCameraAngle();
             SwicthCameraMode();
-        }
-
-        /// <summary>
-        /// キャラクター座標取得/代入はFixedUpdateで行う (RigidBodyの計算の都合上)
-        /// </summary>
-        private void FixedUpdate()
-        {
-            if (currentCamera == null)
-                return;
-
-            t = Vector3.Lerp(t, TrackOffsetPos, Time.deltaTime * LerpPower);
-            v = Vector3.Lerp(v, TrackTarget.GetCenterTransfrom(), Time.deltaTime * LerpPower);
-            IsWallCheck(nextPosition);
-            currentCamera.transform.position = VT + cameraQ * Vector3.forward * cameraD;
         }
 
         /// <summary>
@@ -363,44 +352,6 @@ namespace VoxelBrave
         }
 
         /// <summary>
-        /// 壁チェック
-        /// </summary>
-        /// <param name="movementVec">カメラ表示座標</param>
-        private bool IsWallCheck(Vector3 camMovement)
-        {
-            Vector3 center = camMovement;
-            var target = v;
-            var direction = center - target;
-            var distance = Vector3.Distance(center, target);
-            Physics.SphereCast(target, cameraHitRadius, direction, out cameraHit, distance, hitMask);
-            LogUtil.DrawRay(target, direction, Color.red, 0.2f);
-            return cameraHit.collider != null;
-        }
-
-        /// <summary>
-        /// 対象の角度セット
-        /// </summary>
-        private void SetCameraAngle()
-        {
-            Vector3 direction = Vector3.zero;
-            switch (cameraMode)
-            {
-                case CameraMode.Normal:
-                    // プレイヤーとカメラ方向のベクトル成分を取得
-                    direction = VT - currentCamera.transform.position;
-                    break;
-
-                case CameraMode.LockOn:
-                    // ２点間の中点
-                    var lookCenter = (LockOnTarget.GetCenterTransfrom() + v) / 2;
-                    lookCenter.y = Mathf.Max(LockOnTarget.GetCenterTransfrom().y, v.y);
-                    direction = lookCenter - currentCamera.transform.position;
-                    break;
-            }
-            currentCamera.transform.rotation = Quaternion.LookRotation(direction);
-        }
-
-        /// <summary>
         /// カメラモード切り替え
         /// </summary>
         private void SwicthCameraMode()
@@ -435,6 +386,64 @@ namespace VoxelBrave
 
             UpdateCameraModeParameter(mode);
             cameraMode = mode;
+        }
+
+        // -------------------------------------------------------------
+        // FixedUpdateで処理
+        // -------------------------------------------------------------
+
+        /// <summary>
+        /// キャラクター座標取得/代入はFixedUpdateで行う (RigidBodyの計算の都合上)
+        /// </summary>
+        private void FixedUpdate()
+        {
+            if (currentCamera == null)
+                return;
+
+            t = Vector3.Lerp(t, TrackOffsetPos, Time.fixedDeltaTime * LerpPower);
+            v = Vector3.Lerp(v, TrackTarget.GetCenterTransfrom(), Time.fixedDeltaTime * LerpPower);
+            IsWallCheck(nextPosition);
+            currentCamera.transform.position = VT + cameraQ * Vector3.forward * cameraD;
+            SetCameraAngle();
+        }
+
+        /// <summary>
+        /// 壁チェック
+        /// </summary>
+        /// <param name="movementVec">カメラ表示座標</param>
+        private bool IsWallCheck(Vector3 camMovement)
+        {
+            Vector3 center = camMovement;
+            var target = v;
+            var direction = center - target;
+            var distance = Vector3.Distance(center, target);
+            Physics.SphereCast(target, cameraHitRadius, direction, out cameraHit, distance, hitMask);
+            LogUtil.DrawRay(target, direction, Color.red, 0.2f);
+            return cameraHit.collider != null;
+        }
+
+        [SerializeField]
+        private Vector3 offset = Vector3.zero;
+
+        /// <summary>
+        /// 対象の角度セット
+        /// </summary>
+        private void SetCameraAngle()
+        {
+            var target = Vector3.zero;
+            if (cameraMode == CameraMode.Normal)
+            {
+                target = VT;
+            }
+            else
+            {
+                // ２点間の中点
+                var lookCenter = (LockOnTarget.GetCenterTransfrom() + VT) / 2;
+                lookCenter.y = Mathf.Max(LockOnTarget.GetCenterTransfrom().y, VT.y) / 3;
+                target = lookCenter;
+            }
+            offset = Vector3.Lerp(offset, target, Time.fixedDeltaTime * 10);
+            currentCamera.transform.rotation = Quaternion.LookRotation(offset - currentCamera.transform.position);
         }
 
 #if UNITY_EDITOR
