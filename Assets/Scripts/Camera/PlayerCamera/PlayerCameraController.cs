@@ -113,26 +113,14 @@ namespace VoxelBrave
         /// </summary>
         private CharacterBase LockOnTarget { set => param.lockOnTarget = value; get => param.lockOnTarget; }
 
+        #endregion
+
+        #region Camera Property
+
         /// <summary>
         /// カメラ感度
         /// </summary>
         private readonly Vector2 mouseSenitivity = new Vector2(3, 1.5f);
-
-        #endregion
-
-        #region  Camera Lerp Property
-
-        /// <summary>
-        /// カメラクオータニオン
-        /// <para>最後にカメラに代入される角度</para>
-        /// </summary>
-        private Quaternion cameraQ;
-
-        /// <summary>
-        /// カメラ距離
-        /// <para>最後にカメラに代入される距離</para>
-        /// </summary>
-        private float cameraD;
 
         #endregion
 
@@ -158,7 +146,10 @@ namespace VoxelBrave
         #region Normal Lerp Property --------------------------------------------------------------------------------------
 
         [Header("Lerp量"), SerializeField, Range(1f, 100f)]
-        private const float LerpPower = 25;
+        private float LerpPower = 25;
+
+        [Header("カメラ注視のLerp量"), SerializeField, Range(1, 100)]
+        private float LookAtLerpPower = 25;
 
         /// <summary>
         /// カメラ描画座標Lerp用
@@ -189,6 +180,11 @@ namespace VoxelBrave
         /// カメラ距離Lerp用
         /// </summary>
         private float d;
+
+        /// <summary>
+        /// 通常時のカメラ距離と壁判定時のカメラ距離をLerpで切り替える用の変数
+        /// </summary>
+        private float cameraDistance;
 
         /// <summary>
         /// カメラロックオンLerp用
@@ -228,16 +224,15 @@ namespace VoxelBrave
         private void ClacCameraPosition()
         {
             ClacNextPosition();
-            cameraQ = q;
-            // 壁当たり判定用のカメラ座標
+            // 通常時の距離と壁判定時の距離をLerpで求める
             if (cameraHit.collider == null)
             {
-                cameraD = Mathf.Lerp(cameraD, d, Time.deltaTime * LerpPower);
+                cameraDistance = Mathf.Lerp(cameraDistance, d, Time.deltaTime * LerpPower);
             }
             else
             {
                 float dWall = -(Vector3.Distance(v, cameraHit.point) - cameraHitRadius);
-                cameraD = Mathf.Lerp(cameraD, dWall, Time.deltaTime * LerpPower);
+                cameraDistance = Mathf.Lerp(cameraDistance, dWall, Time.deltaTime * LerpPower);
             }
         }
 
@@ -403,7 +398,7 @@ namespace VoxelBrave
             t = Vector3.Lerp(t, TrackOffsetPos, Time.fixedDeltaTime * LerpPower);
             v = Vector3.Lerp(v, TrackTarget.GetCenterTransfrom(), Time.fixedDeltaTime * LerpPower);
             IsWallCheck(nextPosition);
-            currentCamera.transform.position = VT + cameraQ * Vector3.forward * cameraD;
+            currentCamera.transform.position = VT + q * Vector3.forward * cameraDistance;
             SetCameraAngle();
         }
 
@@ -422,9 +417,6 @@ namespace VoxelBrave
             return cameraHit.collider != null;
         }
 
-        [SerializeField]
-        private Vector3 offset = Vector3.zero;
-
         /// <summary>
         /// 対象の角度セット
         /// </summary>
@@ -442,8 +434,8 @@ namespace VoxelBrave
                 lookCenter.y = Mathf.Max(LockOnTarget.GetCenterTransfrom().y, VT.y) / 3;
                 target = lookCenter;
             }
-            offset = Vector3.Lerp(offset, target, Time.fixedDeltaTime * 10);
-            currentCamera.transform.rotation = Quaternion.LookRotation(offset - currentCamera.transform.position);
+            l = Vector3.Lerp(l, target, Time.fixedDeltaTime * LookAtLerpPower);
+            currentCamera.transform.rotation = Quaternion.LookRotation(l - currentCamera.transform.position);
         }
 
 #if UNITY_EDITOR
@@ -454,6 +446,7 @@ namespace VoxelBrave
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(currentCamera.transform.position, cameraHitRadius);
         }
+
 #endif
 
         /// <summary>
