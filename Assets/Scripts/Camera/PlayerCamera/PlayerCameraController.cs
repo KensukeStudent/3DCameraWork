@@ -36,6 +36,8 @@ namespace VoxelBrave
         [SerializeField]
         private PlayerController player = null;
 
+        private CameraMode cameraMode = CameraMode.Normal;
+
         #region Camera Parameter Property --------------------------------------------------------------------------
 
         /// <summary>
@@ -170,7 +172,7 @@ namespace VoxelBrave
                 return;
 
             ClacCameraPosition();
-            SwicthCameraMode();
+            SwicthLockOnCameraMode();
         }
 
         /// <summary>
@@ -235,28 +237,28 @@ namespace VoxelBrave
             return angle;
         }
 
-        private Vector2 GetNormalAngle(Vector2 trackAngle)
+        private Vector2 GetNormalAngle(Vector2 viewAngle)
         {
             Vector2 mouseAngle = GetMouseAngle();
-            trackAngle.x -= mouseAngle.x;
-            trackAngle.x = Mathf.Clamp(trackAngle.x, -MAX_ANGLE, MAX_ANGLE);
-            trackAngle.y += mouseAngle.y;
-            return trackAngle;
+            viewAngle.x -= mouseAngle.x;
+            viewAngle.x = Mathf.Clamp(viewAngle.x, -MAX_ANGLE, MAX_ANGLE);
+            viewAngle.y += mouseAngle.y;
+            return viewAngle;
         }
 
         /// <summary>
         /// ロックオン時のオート角度設定
         /// </summary>
-        private Vector2 GetLockOnAutoAngle(Vector2 trackAngle)
+        private Vector2 GetLockOnAutoAngle(Vector2 viewAngle)
         {
             // プレイヤーを基点としたカメラ座標とロックオンターゲット座標からcosΘを計算
-            var playerPos = model.GetPlayer.GetBottomTransfrom();
+            var playerPos = player.GetBottomTransfrom();
             var camPos = currentCamera.transform.position;
             var lockOn = LockOnTarget.GetBottomTransfrom();
             var signedPlayerΘ = MathfExtension.GetSignedAngle(playerPos, camPos, lockOn);
 
             // プレイヤーとロックオンターゲットとの距離
-            var diff_PL_distance = Vector3.Distance(model.GetPlayer.GetBottomTransfrom(), LockOnTarget.GetBottomTransfrom());
+            var diff_PL_distance = Vector3.Distance(player.GetBottomTransfrom(), LockOnTarget.GetBottomTransfrom());
 
             float diff = 0;
             float autoLockAngle = 0;
@@ -273,17 +275,17 @@ namespace VoxelBrave
                 autoLockAngle = MAX_LOCKON_ANGLE.x + diffAngle;
 
                 // 自動オート角度範囲内で左右キーが入力されていれば、角度更新しない
-                if (MathfExtension.IsRange(Mathf.Abs(signedPlayerΘ), autoLockAngle, LOCKON_ANGLE_CENTER) && model.GetPlayer.IsLeftRight)
+                if (MathfExtension.IsRange(Mathf.Abs(signedPlayerΘ), autoLockAngle, LOCKON_ANGLE_CENTER) && player.IsLeftRight)
                 {
-                    return trackAngle;
+                    return viewAngle;
                 }
             }
 
             // 左右に角度を足していく
             var sign = signedPlayerΘ > 0 ? 1 : -1;
             diff = (autoLockAngle * sign - signedPlayerΘ);
-            trackAngle.y += diff * Time.deltaTime;
-            return trackAngle;
+            viewAngle.y += diff * Time.deltaTime;
+            return viewAngle;
         }
 
         /// <summary>
@@ -303,9 +305,9 @@ namespace VoxelBrave
         }
 
         /// <summary>
-        /// カメラモード切り替え
+        /// ロックオンカメラモード切り替え
         /// </summary>
-        private void SwicthCameraMode()
+        private void SwicthLockOnCameraMode()
         {
             if (Input.GetMouseButtonUp(1))
             {
