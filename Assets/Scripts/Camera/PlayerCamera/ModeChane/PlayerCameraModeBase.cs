@@ -7,7 +7,7 @@ namespace VoxelBrave
     {
         public CameraMode nextMode;
 
-        public CameraParameter param;
+        public PlayerCameraParameter param;
     }
 
     /// <summary>
@@ -17,30 +17,55 @@ namespace VoxelBrave
     {
         protected PlayerCameraModel model;
 
-        protected CameraParameter param;
+        protected PlayerCameraParameter originParam;
 
-        public PlayerCameraModeBase(PlayerCameraModel _model, CameraParameter _param)
+        protected PlayerCameraParameter defaultParam => new()
+        {
+            ViewTarget = null,
+            ViewLockOn = null,
+            ViewOffset = CommonConst.INIT_VECTOR3,
+            ViewAngle = CommonConst.INIT_VECTOR3,
+            ViewDistance = CommonConst.INIT_INT,
+            LerpPower = CommonConst.INIT_INT,
+            AngleLerpPower = CommonConst.INIT_INT
+        };
+
+        public PlayerCameraModeBase(PlayerCameraModel _model, PlayerCameraParameter _param)
         {
             model = _model;
-            param = _param;
+            originParam = _param;
         }
 
         public abstract SwitchCameraModeInfo SwitchCameraMode(CameraMode nextMode);
 
-        protected SwitchCameraModeInfo CreateCameraModeInfo(CameraMode nextMode, ICameraPosition trackTarget = null, ICameraPosition lockOnTarget = null, Vector3? viewOffset = null, Vector3? ViewAngle = null, float? ViewDistance = null)
+        protected virtual SwitchCameraModeInfo CreateCameraModeInfo(CameraMode nextMode, PlayerCameraParameter nextParam)
         {
+            nextParam.ViewTarget = nextParam.ViewTarget;
+            nextParam.ViewLockOn = nextParam.ViewLockOn;
+            nextParam.ViewOffset = ToUseVector3(nextParam.ViewOffset, originParam.ViewOffset);
+            nextParam.ViewAngle = ToUseVector3(nextParam.ViewAngle, originParam.ViewAngle);
+            nextParam.ViewDistance = ToUseFloat(nextParam.ViewDistance, originParam.ViewDistance);
+            nextParam.LerpPower = ToUseFloat(nextParam.LerpPower, originParam.LerpPower);
+            nextParam.AngleLerpPower = ToUseFloat(nextParam.AngleLerpPower, originParam.AngleLerpPower);
+
             return new SwitchCameraModeInfo()
             {
                 nextMode = nextMode,
-                param = new CameraParameter()
-                {
-                    ViewTarget = trackTarget,
-                    ViewLockOn = lockOnTarget,
-                    ViewOffset = viewOffset == null ? param.ViewOffset : (Vector3)viewOffset,
-                    ViewAngle = ViewAngle == null ? param.ViewAngle : (Vector3)ViewAngle,
-                    ViewDistance = ViewDistance == null ? param.ViewDistance : (float)ViewDistance,
-                }
+                param = nextParam
             };
+        }
+
+        private Vector3 ToUseVector3(Vector3 nextVector3, Vector3 origin)
+        {
+            nextVector3.x = nextVector3.x == CommonConst.INIT_INT ? origin.x : nextVector3.x;
+            nextVector3.y = nextVector3.y == CommonConst.INIT_INT ? origin.y : nextVector3.y;
+            nextVector3.z = nextVector3.z == CommonConst.INIT_INT ? origin.z : nextVector3.z;
+            return nextVector3;
+        }
+
+        private float ToUseFloat(float nextFloat, float origin)
+        {
+            return nextFloat == CommonConst.INIT_INT ? origin : nextFloat;
         }
 
         public Exception DefineCameraModeException()

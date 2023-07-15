@@ -54,7 +54,7 @@ namespace VoxelBrave
         /// カメラパラメータ
         /// </summary>
         [SerializeField, Header("カメラパラメータ")]
-        private CameraParameter param = new CameraParameter();
+        private PlayerCameraParameter param = new PlayerCameraParameter();
 
         /// <summary>
         /// 追跡するターゲット
@@ -81,10 +81,14 @@ namespace VoxelBrave
         /// </summary>
         private float TrackDistance { set => param.ViewDistance = value; get => param.ViewDistance; }
 
+        private float LerpPower { set => param.LerpPower = value; get => param.LerpPower; }
+
+        private float AngleLerpPower { set => param.AngleLerpPower = value; get => param.AngleLerpPower; }
+
         /// <summary>
         /// カメラ感度
         /// </summary>
-        private readonly Vector2 mouseSensitive = new Vector2(3, 1.5f);
+        private Vector2 mouseSensitive = new Vector2(3, 1.5f);
 
         #endregion
 
@@ -108,15 +112,6 @@ namespace VoxelBrave
         #endregion
 
         #region Normal Lerp Property --------------------------------------------------------------------------------------
-
-        [Header("Lerp量"), SerializeField, Range(1f, 100f)]
-        private float LerpPower = 25;
-
-        [Header("カメラ注視のLerp量"), SerializeField, Range(1, 100)]
-        private float LookAtLerpPower = 25;
-
-        [Header("カメラ角度のLerp量"), SerializeField, Range(1, 100)]
-        private float AngleLerpPower = 25;
 
         /// <summary>
         /// カメラ描画座標Lerp用
@@ -330,7 +325,7 @@ namespace VoxelBrave
         /// <summary>
         /// パラメータ初期化
         /// </summary>
-        private void InitCameraParameter(CameraParameter _param)
+        private void InitCameraParameter(PlayerCameraParameter _param)
         {
             TrackTarget = player;
             UpdateCameraModeParameter(_param);
@@ -351,12 +346,14 @@ namespace VoxelBrave
         /// <summary>
         /// カメラモードに応じたパラメータ更新
         /// </summary>
-        private void UpdateCameraModeParameter(CameraParameter _param)
+        private void UpdateCameraModeParameter(PlayerCameraParameter _param)
         {
             LockOnTarget = _param.ViewLockOn;
             TrackOffsetPos = _param.ViewOffset;
             TrackAngle = _param.ViewAngle;
             TrackDistance = _param.ViewDistance;
+            LerpPower = _param.LerpPower;
+            AngleLerpPower = _param.AngleLerpPower;
         }
 
         // -------------------------------------------------------------
@@ -411,7 +408,7 @@ namespace VoxelBrave
                 lookCenter.y = Mathf.Max(LockOnTarget.GetCenterTransfrom().y, VT.y) / 2.5f;
                 target = lookCenter;
             }
-            l = Vector3.Lerp(l, target, Time.fixedDeltaTime * LookAtLerpPower);
+            l = Vector3.Lerp(l, target, Time.fixedDeltaTime * AngleLerpPower);
             currentCamera.transform.rotation = Quaternion.LookRotation(l - currentCamera.transform.position);
         }
 

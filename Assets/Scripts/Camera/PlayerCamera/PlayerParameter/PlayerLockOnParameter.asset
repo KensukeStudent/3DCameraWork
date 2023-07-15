@@ -18,4 +18,4 @@ MonoBehaviour:
     ViewAngle: {x: 20, y: 0, z: 0}
     ViewDistance: 6
     LerpPower: 25
-    AngleLerpPower: 25
+    AngleLerpPower: 5

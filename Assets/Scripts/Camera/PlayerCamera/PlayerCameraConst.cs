@@ -8,11 +8,6 @@ namespace VoxelBrave
     public partial class PlayerCameraController
     {
         /// <summary>
-        /// 中心のViewport座標
-        /// </summary>
-        private const float VIEWPORT_CENTER = 0.5f;
-
-        /// <summary>
         /// 中心のロックオン座標
         /// </summary>
         private const float LOCKON_ANGLE_CENTER = 180.0f;
@@ -21,11 +16,6 @@ namespace VoxelBrave
         /// キャラクターが描画されるカメラビューポート最大範囲内
         /// </summary>
         private readonly Vector2 MAX_LOCKON_ANGLE = new Vector2(120.0f, 0.40f);
-
-        /// <summary>
-        /// キャラクターが描画されるカメラビューポート最小範囲内
-        /// </summary>
-        private readonly Vector2 MIN_LOCKON_ANGLE = new Vector2(-120.0f, 0.05f);
 
         /// <summary>
         /// プレイヤーと敵との距離がEXPAND_LOCKON_DISTANCE未満のときにviewport上の判定領域を変更する

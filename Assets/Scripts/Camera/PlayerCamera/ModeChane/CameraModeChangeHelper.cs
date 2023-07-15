@@ -12,11 +12,11 @@ namespace VoxelBrave
         /// </summary>
         private readonly PlayerCameraModel model = null;
 
-        private CameraParameter param = null;
+        private PlayerCameraParameter param = null;
 
         private readonly Dictionary<CameraMode, PlayerCameraModeBase> switchCameraDic;
 
-        public CameraModeChangeHelper(PlayerCameraModel _model, CameraParameter _param)
+        public CameraModeChangeHelper(PlayerCameraModel _model, PlayerCameraParameter _param)
         {
             model = _model;
             param = _param;

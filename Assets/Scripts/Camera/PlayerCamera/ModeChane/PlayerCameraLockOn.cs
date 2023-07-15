@@ -5,7 +5,7 @@ namespace VoxelBrave
     /// </summary>
     public class PlayerCameraLockOn : PlayerCameraModeBase
     {
-        public PlayerCameraLockOn(PlayerCameraModel _model, CameraParameter _param) : base(_model, _param)
+        public PlayerCameraLockOn(PlayerCameraModel _model, PlayerCameraParameter _param) : base(_model, _param)
         {
 
         }
@@ -22,7 +22,11 @@ namespace VoxelBrave
         private SwitchCameraModeInfo GetNormalInfo()
         {
             var normalParam = model.GetParameter(CameraMode.Normal);
-            return CreateCameraModeInfo(CameraMode.Normal, lockOnTarget: normalParam.ViewLockOn, ViewDistance: normalParam.ViewDistance);
+            var nextParam = defaultParam;
+            nextParam.ViewLockOn = normalParam.ViewLockOn;
+            nextParam.ViewDistance = normalParam.ViewDistance;
+            nextParam.AngleLerpPower = normalParam.AngleLerpPower;
+            return CreateCameraModeInfo(CameraMode.Normal, nextParam);
         }
     }
 }

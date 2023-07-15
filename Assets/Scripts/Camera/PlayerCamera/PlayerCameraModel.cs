@@ -32,7 +32,7 @@ namespace VoxelBrave
             lockOnParameter.CheckValidation(CameraMode.LockOn, () => lockOnParameter);
         }
 
-        public CameraParameter GetParameter(CameraMode cameraMode)
+        public PlayerCameraParameter GetParameter(CameraMode cameraMode)
         {
             return cameraMode switch
             {
