@@ -6,6 +6,11 @@ namespace VoxelBrave
     public enum CameraMode
     {
         /// <summary>
+        /// 設定なし
+        /// </summary>
+        None = -1,
+
+        /// <summary>
         /// 通常カメラワーク
         /// </summary>
         Normal,
@@ -75,10 +80,6 @@ namespace VoxelBrave
         /// 追跡ターゲットとの距離
         /// </summary>
         private float TrackDistance { set => param.ViewDistance = value; get => param.ViewDistance; }
-
-        #endregion
-
-        #region Camera Property
 
         /// <summary>
         /// カメラ感度

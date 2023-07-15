@@ -18,6 +18,12 @@ namespace VoxelBrave
         }
 
         [Conditional("UNITY_EDITOR")]
+        public static void Warning(object o)
+        {
+            UnityEngine.Debug.LogWarning(o);
+        }
+
+        [Conditional("UNITY_EDITOR")]
         public static void DrawRay(Vector3 start, Vector3 dir, Color color, float duration)
         {
             UnityEngine.Debug.DrawRay(start, dir, color, duration);

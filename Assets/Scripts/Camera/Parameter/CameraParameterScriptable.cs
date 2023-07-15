@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace VoxelBrave
 {
-    [CreateAssetMenu(fileName = "CameraParameter", menuName = "Camera/Parameter")]
+    [CreateAssetMenu(fileName = "名前を変更してね(CameraParameter)", menuName = "Camera/Parameter")]
     public class CameraParameterScriptable : ScriptableObject
     {
         [SerializeField]
-        public CameraParameter cameraParameter;
+        public CameraParameter parameter;
     }
 
 
@@ -39,7 +39,7 @@ namespace VoxelBrave
         /// <summary>
         /// 描画距離
         /// </summary>
-        [SerializeField, Header("追跡ターゲットとの距離")]
+        [SerializeField, Range(1, 10), Header("追跡ターゲットとの距離")]
         public float ViewDistance;
     }
 }
