@@ -109,6 +109,9 @@ namespace VoxelBrave
         [Header("カメラ注視のLerp量"), SerializeField, Range(1, 100)]
         private float LookAtLerpPower = 25;
 
+        [Header("カメラ角度のLerp量"), SerializeField, Range(1, 100)]
+        private float AngleLerpPower = 25;
+
         /// <summary>
         /// カメラ描画座標Lerp用
         /// </summary>
@@ -200,7 +203,7 @@ namespace VoxelBrave
         /// </summary>
         private void ClacNextPosition()
         {
-            q = Quaternion.Lerp(q, GetRotateQuaternion(), Time.deltaTime * LerpPower);
+            q = Quaternion.Lerp(q, GetRotateQuaternion(), Time.deltaTime * AngleLerpPower);
             d = Mathf.Lerp(d, GetDistance(), Time.deltaTime * LerpPower);
             // forward : カメラの正面方向がクォータニオンによって回転された方向とする
             nextPosition = VT + q * Vector3.forward * d;
