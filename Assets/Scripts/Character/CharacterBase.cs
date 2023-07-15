@@ -6,7 +6,7 @@ namespace VoxelBrave
     /// キャラクターベースクラス
     /// <para>移動やカメラのロックオン、HPなどを持っているキャラクターに継承させる</para>
     /// </summary>
-    public abstract class CharacterBase : MonoBehaviour
+    public abstract class CharacterBase : MonoBehaviour, ICameraPosition
     {
         /// <summary>
         /// 3DモデルのRenderer
@@ -18,15 +18,15 @@ namespace VoxelBrave
         private float centerPosY = 0;
 
         /// <summary>
+        /// modelのboundsサイズ
+        /// </summary>
+        public Vector3 BodySize { private set; get; }
+
+        /// <summary>
         /// モデルのPivotが初めから中心である
         /// </summary>
         [Header("モデルのPivotが初めから中心である"), SerializeField]
         private bool isCenter = false;
-
-        /// <summary>
-        /// modelのboundsサイズ
-        /// </summary>
-        public Vector3 BodySize { private set; get; }
 
         [SerializeField]
         protected Animator animator = null;
