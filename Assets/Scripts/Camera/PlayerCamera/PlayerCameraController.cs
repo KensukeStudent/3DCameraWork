@@ -150,7 +150,7 @@ namespace VoxelBrave
 
         private void Start()
         {
-            model.Init();
+            model.Init(player);
             UpdateParameter(model.GetParameter(CameraMode.Normal));
             hitMask = LayerMask.GetMask("CameraHit");
         }

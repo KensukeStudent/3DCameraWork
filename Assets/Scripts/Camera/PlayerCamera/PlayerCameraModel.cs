@@ -8,18 +8,19 @@ namespace VoxelBrave
     public class PlayerCameraModel : MonoBehaviour
     {
         [SerializeField]
-        private CameraParameter normalParameter = null;
+        private CameraParameterScriptable normalParameter = null;
 
         [SerializeField]
-        private CameraParameter lockOnParameter = null;
+        private CameraParameterScriptable lockOnParameter = null;
 
-        [SerializeField]
-        private SimpleSampleCharacterControl player = null;
+        // TODO : モデルからでも参照できるように定義
+        public PlayerController Player { private set; get; } = null;
 
-        public void Init()
+        public void Init(PlayerController _player)
         {
-            normalParameter.ViewTarget = player.transform;
-            normalParameter.ViewLockOn = player.transform;
+            Player = _player;
+            normalParameter.cameraParameter.ViewTarget = Player;
+            normalParameter.cameraParameter.ViewLockOn = Player;
         }
 
         /// <summary>
@@ -36,8 +37,8 @@ namespace VoxelBrave
         {
             return cameraMode switch
             {
-                CameraMode.Normal => normalParameter,
-                CameraMode.LockOn => lockOnParameter,
+                CameraMode.Normal => normalParameter.cameraParameter,
+                CameraMode.LockOn => lockOnParameter.cameraParameter,
                 _ => throw new System.Exception("")
             };
         }
