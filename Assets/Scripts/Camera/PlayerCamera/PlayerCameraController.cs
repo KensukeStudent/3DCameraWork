@@ -38,6 +38,11 @@ namespace VoxelBrave
 
         private CameraMode cameraMode = CameraMode.Normal;
 
+        /// <summary>
+        /// カメラモード切り替え時のヘルパークラス
+        /// </summary>
+        private CameraModeChangeHelper cameraModeChangeHelper = null;
+
         #region Camera Parameter Property --------------------------------------------------------------------------
 
         /// <summary>
@@ -157,7 +162,8 @@ namespace VoxelBrave
         private void Start()
         {
             model.Init(player);
-            UpdateParameter(model.GetParameter(CameraMode.Normal));
+            InitCameraParameter(model.GetParameter(CameraMode.Normal));
+            cameraModeChangeHelper = new(model, param);
             hitMask = LayerMask.GetMask("CameraHit");
         }
 
@@ -314,44 +320,42 @@ namespace VoxelBrave
         {
             if (Input.GetMouseButtonUp(1))
             {
-                CameraMode mode = CameraMode.Normal;
-                if (cameraMode == CameraMode.LockOn)
-                {
-                    mode = CameraMode.Normal;
-                    LockOnTarget = model.GetPlayer;
-                }
-                else
-                {
-                    CharacterBase lockTarget = model.GetLockOnTarget;
-                    LockOnTarget = lockTarget != null ? lockTarget : model.GetPlayer;
-                    mode = LockOnTarget == model.GetPlayer ? CameraMode.Normal : CameraMode.LockOn;
-                }
-
-                // カメラパラメータ更新
-                SwitchCameraParameter(mode);
+                var preMode = cameraMode;
+                var nextMode = cameraMode == CameraMode.Normal ? CameraMode.LockOn : CameraMode.Normal;
+                UpdateCameraParameter(cameraModeChangeHelper.SwitchCameraMode(preMode, nextMode));
             }
+        }
+
+        /// <summary>
+        /// パラメータ初期化
+        /// </summary>
+        private void InitCameraParameter(CameraParameter _param)
+        {
+            TrackTarget = player;
+            UpdateCameraModeParameter(_param);
         }
 
         /// <summary>
         /// カメラパラメータ更新
         /// </summary>
-        private void SwitchCameraParameter(CameraMode mode)
+        private void UpdateCameraParameter(SwitchCameraModeInfo info)
         {
-            if (mode == cameraMode)
+            if (cameraMode == info.nextMode)
                 return;
 
-            UpdateCameraModeParameter(mode);
-            cameraMode = mode;
+            UpdateCameraModeParameter(info.param);
+            cameraMode = info.nextMode;
         }
 
         /// <summary>
         /// カメラモードに応じたパラメータ更新
         /// </summary>
-        private void UpdateCameraModeParameter(CameraMode mode)
+        private void UpdateCameraModeParameter(CameraParameter _param)
         {
-            TrackOffsetPos = model.GetParameter(mode).ViewOffset;
-            TrackAngle = model.GetParameter(mode).ViewAngle;
-            TrackDistance = model.GetParameter(mode).ViewDistance;
+            LockOnTarget = _param.ViewLockOn;
+            TrackOffsetPos = _param.ViewOffset;
+            TrackAngle = _param.ViewAngle;
+            TrackDistance = _param.ViewDistance;
         }
 
         // -------------------------------------------------------------
@@ -408,18 +412,6 @@ namespace VoxelBrave
             }
             l = Vector3.Lerp(l, target, Time.fixedDeltaTime * LookAtLerpPower);
             currentCamera.transform.rotation = Quaternion.LookRotation(l - currentCamera.transform.position);
-        }
-
-        /// <summary>
-        /// カメラパラメーター更新
-        /// </summary>
-        public void UpdateParameter(CameraParameter parameter)
-        {
-            param.ViewTarget = parameter.ViewTarget;
-            param.ViewOffset = parameter.ViewOffset;
-            param.ViewAngle = parameter.ViewAngle;
-            param.ViewDistance = parameter.ViewDistance;
-            param.ViewLockOn = parameter.ViewLockOn;
         }
 
 #if UNITY_EDITOR

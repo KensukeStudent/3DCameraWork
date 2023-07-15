@@ -7,9 +7,15 @@ namespace VoxelBrave
     /// </summary>
     public class PlayerCameraModel : MonoBehaviour
     {
+        /// <summary>
+        /// 通常カメラワークデータ
+        /// </summary>
         [SerializeField]
         private CameraParameterScriptable normalParameter = null;
 
+        /// <summary>
+        /// ロックオンカメラワークデータ
+        /// </summary>
         [SerializeField]
         private CameraParameterScriptable lockOnParameter = null;
 
