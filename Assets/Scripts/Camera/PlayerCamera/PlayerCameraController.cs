@@ -83,7 +83,7 @@ namespace VoxelBrave
         /// <summary>
         /// カメラ感度
         /// </summary>
-        private readonly Vector2 mouseSenitivity = new Vector2(3, 1.5f);
+        private readonly Vector2 mouseSensitive = new Vector2(3, 1.5f);
 
         #endregion
 
@@ -241,8 +241,8 @@ namespace VoxelBrave
         private Vector3 GetMouseAngle()
         {
             var angle = Vector2.zero;
-            angle.x = Input.GetAxis("Mouse Y") * mouseSenitivity.y;
-            angle.y = Input.GetAxis("Mouse X") * mouseSenitivity.x;
+            angle.x = Input.GetAxis("Mouse Y") * mouseSensitive.y;
+            angle.y = Input.GetAxis("Mouse X") * mouseSensitive.x;
             return angle;
         }
 
