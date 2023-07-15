@@ -8,7 +8,7 @@ namespace VoxelBrave
     /// <summary>
     /// キャラクター仮
     /// </summary>
-    public class SimpleSampleCharacterControl : CharacterBase
+    public class PlayerController : CharacterBase
     {
         #region Move Property -----------------------------------------
 
