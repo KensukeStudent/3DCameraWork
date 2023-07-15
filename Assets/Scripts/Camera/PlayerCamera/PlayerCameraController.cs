@@ -16,46 +16,6 @@ namespace VoxelBrave
         LockOn
     }
 
-    [Serializable]
-    public class PlayerCameraParameter
-    {
-        /// <summary>
-        /// 追跡するターゲット
-        /// </summary>
-        [SerializeField, Header("追跡ターゲット")]
-        public CharacterBase trackTarget = null;
-
-        /// <summary>
-        /// オフセット座標
-        /// </summary>
-        [SerializeField, Header("オフセット座標")]
-        public Vector3 trackOffsetPos = Vector3.zero;
-
-        /// <summary>
-        /// オフセットアングル
-        /// </summary>
-        [SerializeField, Header("オフセット角度")]
-        public Vector3 trackOffsetAngle = Vector3.zero;
-
-        /// <summary>
-        /// 追跡ターゲットとの距離
-        /// </summary>
-        [SerializeField, Header("追跡ターゲットとの距離")]
-        public float trackDistance = 0;
-
-        /// <summary>
-        /// 追跡ターゲットとの角度
-        /// </summary>
-        [SerializeField, Header("追跡ターゲットとの角度")]
-        public Vector3 trackAngle = Vector3.zero;
-
-        /// <summary>
-        /// ロックオンターゲット
-        /// </summary>
-        [SerializeField, Header("ロックオン対象")]
-        public CharacterBase lockOnTarget = null;
-    }
-
     /// <summary>
     /// プレイヤー操作クラス
     /// </summary>
@@ -81,37 +41,32 @@ namespace VoxelBrave
         /// カメラパラメータ
         /// </summary>
         [SerializeField, Header("カメラパラメータ")]
-        private PlayerCameraParameter param = new PlayerCameraParameter();
+        private CameraParameter param = new CameraParameter();
 
         /// <summary>
         /// 追跡するターゲット
         /// </summary>
-        private CharacterBase TrackTarget { set => param.trackTarget = value; get => param.trackTarget; }
-
-        /// <summary>
-        /// オフセット座標
-        /// </summary>
-        private Vector3 TrackOffsetPos { set => param.trackOffsetPos = value; get => param.trackOffsetPos; }
-
-        /// <summary>
-        /// オフセットアングル
-        /// </summary>
-        private Vector3 TrackOffsetAngle { set => param.trackOffsetAngle = value; get => param.trackOffsetAngle; }
-
-        /// <summary>
-        /// 追跡ターゲットとの距離
-        /// </summary>
-        private float TrackDistance { set => param.trackDistance = value; get => param.trackDistance; }
-
-        /// <summary>
-        /// 追跡ターゲットとの角度
-        /// </summary>
-        private Vector3 TrackAngle { set => param.trackAngle = value; get => param.trackAngle; }
+        private ICameraPosition TrackTarget { set => param.ViewTarget = value; get => param.ViewTarget; }
 
         /// <summary>
         /// ロックオンターゲット
         /// </summary>
-        private CharacterBase LockOnTarget { set => param.lockOnTarget = value; get => param.lockOnTarget; }
+        private ICameraPosition LockOnTarget { set => param.ViewLockOn = value; get => param.ViewLockOn; }
+
+        /// <summary>
+        /// オフセット座標
+        /// </summary>
+        private Vector3 TrackOffsetPos { set => param.ViewOffset = value; get => param.ViewOffset; }
+
+        /// <summary>
+        /// 追跡ターゲットとの角度
+        /// </summary>
+        private Vector3 TrackAngle { set => param.ViewAngle = value; get => param.ViewAngle; }
+
+        /// <summary>
+        /// 追跡ターゲットとの距離
+        /// </summary>
+        private float TrackDistance { set => param.ViewDistance = value; get => param.ViewDistance; }
 
         #endregion
 
