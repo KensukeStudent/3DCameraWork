@@ -27,13 +27,14 @@ namespace VoxelBrave
         [SerializeField]
         private PlayerCameraModel model = null;
 
-        private CameraMode cameraMode = CameraMode.Normal;
-
         /// <summary>
         /// 現在制御中のカメラ
         /// </summary>
         [SerializeField]
         private Camera currentCamera = null;
+
+        [SerializeField]
+        private PlayerController player = null;
 
         #region Camera Parameter Property --------------------------------------------------------------------------
 
@@ -338,6 +339,16 @@ namespace VoxelBrave
             cameraMode = mode;
         }
 
+        /// <summary>
+        /// カメラモードに応じたパラメータ更新
+        /// </summary>
+        private void UpdateCameraModeParameter(CameraMode mode)
+        {
+            TrackOffsetPos = model.GetParameter(mode).ViewOffset;
+            TrackAngle = model.GetParameter(mode).ViewAngle;
+            TrackDistance = model.GetParameter(mode).ViewDistance;
+        }
+
         // -------------------------------------------------------------
         // FixedUpdateで処理
         // -------------------------------------------------------------
@@ -394,6 +405,18 @@ namespace VoxelBrave
             currentCamera.transform.rotation = Quaternion.LookRotation(l - currentCamera.transform.position);
         }
 
+        /// <summary>
+        /// カメラパラメーター更新
+        /// </summary>
+        public void UpdateParameter(CameraParameter parameter)
+        {
+            param.ViewTarget = parameter.ViewTarget;
+            param.ViewOffset = parameter.ViewOffset;
+            param.ViewAngle = parameter.ViewAngle;
+            param.ViewDistance = parameter.ViewDistance;
+            param.ViewLockOn = parameter.ViewLockOn;
+        }
+
 #if UNITY_EDITOR
 
         private void OnDrawGizmos()
@@ -404,28 +427,5 @@ namespace VoxelBrave
         }
 
 #endif
-
-        /// <summary>
-        /// カメラモードに応じたパラメータ更新
-        /// </summary>
-        private void UpdateCameraModeParameter(CameraMode mode)
-        {
-            TrackOffsetPos = model.GetParameter(mode).ViewOffset;
-            TrackAngle = model.GetParameter(mode).ViewAngle;
-            TrackDistance = model.GetParameter(mode).ViewDistance;
-        }
-
-        /// <summary>
-        /// カメラパラメーター更新
-        /// </summary>
-        public void UpdateParameter(CameraParameter parameter)
-        {
-            param.trackTarget = parameter.ViewTarget.GetComponent<CharacterBase>();
-            param.trackOffsetPos = parameter.ViewOffset;
-            param.trackOffsetAngle = parameter.ViewAngle;
-            param.trackAngle = parameter.ViewAngle;
-            param.trackDistance = parameter.ViewDistance;
-            param.lockOnTarget = parameter.ViewLockOn.GetComponent<CharacterBase>();
-        }
     }
 }
