@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace VoxelBrave
+namespace CameraWork
 {
     /// <summary>
     /// プレイヤーカメラモード変更担当クラス

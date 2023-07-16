@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace VoxelBrave
+namespace CameraWork
 {
     public enum CameraMode
     {

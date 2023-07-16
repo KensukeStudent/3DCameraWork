@@ -1,4 +1,4 @@
-namespace VoxelBrave
+namespace CameraWork
 {
     /// <summary>
     /// プレイヤーカメラロックオンモード時の切り替え定義クラス

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace VoxelBrave
+namespace CameraWork
 {
     /// <summary>
     /// プレイヤーカメラ通常時の切り替え定義クラス

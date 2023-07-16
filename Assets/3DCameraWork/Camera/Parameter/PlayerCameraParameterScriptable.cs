@@ -2,7 +2,7 @@ using System;
 using System.Linq.Expressions;
 using UnityEngine;
 
-namespace VoxelBrave
+namespace CameraWork
 {
     [CreateAssetMenu(fileName = "名前を変更してね(PlayerCameraParameter)", menuName = "Camera/PlayerCameraParameter")]
     public class PlayerCameraParameterScriptable : ScriptableObject

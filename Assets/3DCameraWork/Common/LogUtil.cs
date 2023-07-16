@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Diagnostics;
 
-namespace VoxelBrave
+namespace CameraWork
 {
     /// <summary>
     /// ログユーティリティークラス

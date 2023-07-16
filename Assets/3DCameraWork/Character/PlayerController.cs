@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace VoxelBrave
+namespace CameraWork
 {
     /// <summary>
     /// キャラクター仮

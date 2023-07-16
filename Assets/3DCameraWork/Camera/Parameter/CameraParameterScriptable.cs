@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace VoxelBrave
+namespace CameraWork
 {
     [CreateAssetMenu(fileName = "名前を変更してね(CameraParameter)", menuName = "Camera/Parameter")]
     public class CameraParameterScriptable : ScriptableObject

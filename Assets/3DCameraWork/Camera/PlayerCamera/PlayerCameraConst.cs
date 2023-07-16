@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace VoxelBrave
+namespace CameraWork
 {
     /// <summary>
     /// プレイヤーカメラ定数値
