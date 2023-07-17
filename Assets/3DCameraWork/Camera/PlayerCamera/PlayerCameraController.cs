@@ -187,16 +187,7 @@ namespace CameraWork
         private void ClacCameraPosition()
         {
             ClacNextPosition();
-            // 通常時の距離と壁判定時の距離をLerpで求める
-            if (cameraHit.collider == null)
-            {
-                cameraDistance = Mathf.Lerp(cameraDistance, d, Time.deltaTime * LerpPower);
-            }
-            else
-            {
-                float dWall = -(Vector3.Distance(v, cameraHit.point) - cameraHitRadius);
-                cameraDistance = Mathf.Lerp(cameraDistance, dWall, Time.deltaTime * LerpPower);
-            }
+            ClacNextDistance();
         }
 
         /// <summary>
@@ -209,6 +200,23 @@ namespace CameraWork
             d = Mathf.Lerp(d, GetDistance(), Time.deltaTime * LerpPower);
             // forward : カメラの正面方向がクォータニオンによって回転された方向とする
             nextPosition = VT + q * Vector3.forward * d;
+        }
+
+        /// <summary>
+        /// プレイヤーまでの距離を求める
+        /// <para>通常時の距離と壁判定時の距離をLerpで求める</para>
+        /// </summary>
+        private void ClacNextDistance()
+        {
+            if (cameraHit.collider == null)
+            {
+                cameraDistance = Mathf.Lerp(cameraDistance, d, Time.deltaTime * LerpPower);
+            }
+            else
+            {
+                float dWall = -(Vector3.Distance(v, cameraHit.point) - cameraHitRadius);
+                cameraDistance = Mathf.Lerp(cameraDistance, dWall, Time.deltaTime * LerpPower);
+            }
         }
 
         /// <summary>
